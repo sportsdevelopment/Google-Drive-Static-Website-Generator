@@ -1,0 +1,105 @@
+<section>
+       <div class="container">
+		 
+         <div class="row">
+           <div class="col-lg-12 text-center">
+             <h1 class="section-heading text-uppercase">Projects</h1>
+             <h3 class="section-subheading text-muted">Here is a full list. Use the filters to find the projects that are more interesting for you.</h3>  
+           </div>
+         </div>
+  
+         <div class="row">	
+           <div class="col-sm-4">
+             <div class="form-group">
+               <label for="sel1">Filter by theme</label>
+               <select class="form-control" id="sel1">
+                 <option>Equity and inclusion</option>
+                 <option>Social good</option>
+                 <option>Sport development</option>
+                 <option>Youth support</option>
+               </select>
+             </div>
+           </div>
+           
+           <div class="col-sm-4">
+             <div class="form-group">
+               <label for="sel1">Filter by location</label>
+               <select class="form-control" id="sel1">
+                 <option>Cambodia</option>
+                 <option>Haiti</option>
+                 <option>India</option>
+                 <option>Jordan</option>
+                 <option>Venezuela</option>
+                 <option>Uganda</option>
+                 <option>United Kingdom</option>
+               </select>
+             </div>
+           </div>
+           
+           <div class="col-sm-4">
+             <div class="form-group">
+               <label for="sel1">Filter by type of support</label>
+               <select class="form-control" id="sel1">
+                 <option>Money</option>
+                 <option>Equipment</option>
+                 <option>Skills</option>
+                 <option>Disc Missionary</option>
+               </select>
+             </div>
+           </div>
+           
+		</div>
+	
+        <div class="row">
+          <div class="col-lg-12">
+             <div class="table-responsive table-hover table-bordered">
+             <table id="projects" class="table">
+             
+             </table>
+             </div>
+          </div>
+        </div>
+      </div>
+</section>
+
+<script>
+
+$( document ).ready(function() {
+  var jsonPath = 'projects/projects.json';
+  var html = '';
+
+  $.getJSON(jsonPath, function(data) {
+  
+    $.each(data, function(key, item){
+      if (item.is_published == '1') {
+        html += '<tr>';
+       
+        html += '<td class="item-title"><a href="/projects/' + item.id + '">' + item.title + '</a></td>';
+        html += '<td class="item-theme">' + item.theme + '</td>';
+        html += '<td class="item-country">' + item.country + '</td>';
+        html += '<td class="item-donate">';   
+                        
+        if (item.money_url || item.equipment_text || item.service_text) {
+          if (item.money_url) { html += '<i title="Money" class="fa fa-donate"></i>'; }
+          if (item.equipment_text) { html += '<i title="Equipment" class="fa fa-gift"></i>'; }
+          if (item.service_text) { html += '<i title="Skills" class="fa fa-user-circle"></i>'; }
+        }   
+        html += '</td>';  
+      
+        html += '</tr>';
+      }  
+    });
+  
+    $('#projects').html(html);
+  });
+  
+});
+
+
+$('select').on('change', function() {
+  var value = this.value.toLowerCase();
+  $("#projects tr").filter(function() {
+    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+  });
+})
+</script>

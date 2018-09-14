@@ -1,0 +1,72 @@
+<section>
+       <div class="container">
+		 
+         <div class="row">
+           <div class="col-lg-12 text-center">
+             <h1 class="section-heading text-uppercase">Resources</h1>
+             <h3 class="section-subheading text-muted">Here is a list of publicly available resources that have been selected for publication (some are restricted to WFDF members only). <br>Do get in contact if you are looking for something not on this list - we may have it, or start working to develop it based on your feedback!</h3>  
+           </div>
+         </div>
+  
+         <div class="row">	
+           <div class="col-sm-4">
+             <div class="form-group">
+               <label for="sel1">Filter by theme</label>
+               <select class="form-control" id="sel1">
+                 <option>Equity and inclusion</option>
+                 <option>Social good</option>
+                 <option>Sport development</option>
+                 <option>Youth support</option>
+               </select>
+             </div>
+           </div>
+           
+                     
+		</div>
+	
+        <div class="row">
+          <div class="col-lg-12">
+             <div class="table-responsive table-hover table-bordered">
+             <table id="resources" class="table">
+             
+             </table>
+             </div>
+          </div>
+        </div>
+      </div>
+</section>
+
+<script>
+
+$( document ).ready(function() {
+  var jsonPath = 'resources/resources.json';
+  var html = '';
+
+  $.getJSON(jsonPath, function(data) {
+  
+    $.each(data, function(key, item){
+      if (item.is_published == '1') {
+        html += '<tr item-id="resource-' + item.id + '">';
+      
+        html += '<td class="item-title"><a href="' + item.url + '" target="_blank">' + item.title + '</a></td>';
+        html += '<td class="item-theme">' + item.theme + '</td>';
+        html += '<td class="item-description">' + item.description + '</td>';
+      
+        html += '</tr>';    
+      }
+    });
+  
+    $('#resources').html(html);
+  });
+  
+});
+
+$('select').on('change', function() {
+  var value = this.value.toLowerCase();
+  $("#resources tr").filter(function() {
+    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+  });
+})
+</script>
+
+

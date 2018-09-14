@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="shortcut icon" href="/images/favicon.ico" type="image/x-icon">
+    
+    <!-- JQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.js"></script>
+    
+    <!-- Bootstrap -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/css/bootstrap.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.1.1/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- w2ui (for table sorting and filtering) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/w2ui/1.4.3/w2ui.min.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/w2ui/1.4.3/w2ui.min.js"></script>
+    
+    <!-- Custom fonts -->
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.10/css/all.css" integrity="sha384-+d0P83n9kaQMCwj8F4RJB66tzIwOKmrdb46+porD/OvrJ+37WqIM7UoBtwHO6Nlg" crossorigin="anonymous">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700" rel="stylesheet" type="text/css">
+    <link href='https://fonts.googleapis.com/css?family=Kaushan+Script' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Droid+Serif:400,700,400italic,700italic' rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto+Slab:400,100,300,700' rel='stylesheet' type='text/css'>
+    
+    <!-- Print inline the custom CSS and JS -->
+    <script>
+      <?!= getContent('main.js'); ?>
+    </script>
+    <style>
+      <?!= getContent('main.css'); ?>
+    </style>
+
+  </head>
+  <body>
+    <section id="join">
+      <div class="container">
+        <div class="row">
+          <div class="col-lg-12 text-center">
+            <h2 class="section-heading text-uppercase">WFDF Development - Admin Dashboard</h2>
+            <a class="btn btn-primary" onclick="google.script.run.updateMainJS()">Update JS</a>
+            <a class="btn btn-primary" onclick="google.script.run.updateMainCSS()">Update CSS</a>
+            <a class="btn btn-primary" onclick="google.script.run.updateAllCorePages()">Update all core page</a>
+            <a class="btn btn-primary" onclick="google.script.run.updateAllProjectPages()">Update all projects</a>
+          </div>
+        </div>
+      </div>
+    </section>  
+  </body>
+</html>
+
+
