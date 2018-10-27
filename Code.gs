@@ -1,12 +1,8 @@
 /* 
-To run the script that interact with Google drive, you need to enable the Google Drive API: data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAsAAAALCAYAAACprHcmAAAA6klEQVQY05WRzwqCQBCH94GiS+Ah6A8EXXwQ7wsqKGqCStAz9B7R2TqZdpAMCopOvUPQ9huZhfLW4WOY3367jKNwXVeAAliO44ggCESSJG2lHvkCbMjTogInHA468gz5DbzJI9kCD7qAwyMkg+U5+jM/VJMneIwxuNi2rSCVWZatURvqkR+AocdowSsT3/f3kBSqCsOQ6ha5oZ1vWcRxvCJZStnKURRJ/shfGZh4qSSZINnzvBz5tCub4M4z52maLlErnrnWF/Qen7yNHaQ+b2OEvuJtXMkTvHAKChz2OnseIm/Aizzxzx/8AIvX4+gc2zPQAAAAAElFTkSuQmCC
-You can do it by clikcing on "Tools > Script Editor" and then on "Resources > Advanced Google Services"
-
 Important: the REST calls are restricted by the Google Apps Script quotas. The two you are most likely to hit into are: 
 1) The maximum runtime for a script is 6 minutes. Individual scripts have a limit of 30 seconds. 
 2) The URLfetch (the HTTP/HTTPS service used to make the API calls) has a 20MB maximum payload size per call.
    For full details, see https://developers.google.com/apps-script/guides/services/quotas   
-   
 */
 
 
@@ -17,11 +13,11 @@ function doGet(e) {
   
   //you can also pass a parameter via the URL as ?add=XXX 
 
-  var template = HtmlService.createTemplateFromFile('Dashboard');  
+  var template = HtmlService.createTemplateFromFile('project_dashboard');  
 
   var htmlOutput = template.evaluate()
                    .setSandboxMode(HtmlService.SandboxMode.IFRAME)
-                   .setTitle('Dashboard Development')
+                   .setTitle('Dashboard for WFDF Development')
                    .addMetaTag('viewport', 'width=device-width, initial-scale=1')
                    .setFaviconUrl('http://threeflamesproductions.com/wp-content/uploads/2017/01/Favicon_ThreeFlames_FireIcon_Color.png');
 
@@ -169,9 +165,8 @@ function createJSONFromArray(folder, fileIDArray){
 // Function to convert a string into a SEO-friendly URL
 // from https://stackoverflow.com/questions/14107522/producing-seo-friendly-url-in-javascript
 // ******************************************************************************************************
-function toSeoUrl(textToConvert) {
+function createUrl(textToConvert) {
     return textToConvert.toString()               // Convert to string
-        .normalize('NFD')               // Change diacritics
         .replace(/[\u0300-\u036f]/g,'') // Remove illegal characters
         .replace(/\s+/g,'-')            // Change whitespace to dashes
         .toLowerCase()                  // Change to lowercase
@@ -183,3 +178,17 @@ function toSeoUrl(textToConvert) {
 }
 
 
+function getProjectURL(id){
+  var idString = id.toString();
+  var data = sheet2Json('Projects');
+  //filter the data to get the project with the required id
+  var projectDataArray = data.filter(function (entry) {
+    return entry.id == idString;
+  });
+  //the above returns an array - you want just the first item
+  var projectData = projectDataArray[0];
+  if (projectData){
+    var path = "projects/" + projectData.url + '.html'
+    return path;
+  }
+}

@@ -3,13 +3,22 @@
 // ******************************************************************************************************
 function onOpen(){
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var menuEntries = [{name: "Configure the github repo", functionName: "githubRepoConfigure"},
-                     {name: "Configure the Cloudinary API", functionName: "cloudinaryConfigure"},
-                     {name: "Configure Google Analytics and Optimize", functionName: "configureGoogleScripts"},
-                     {name: "Configure pagesID from gDrive", functionName: "configurePagesID"},
-                     {name: "Set your GitHub authentication", functionName: "setGithubAuthToken"},
-                    ]; 
-  ss.addMenu("Configure", menuEntries);
+  
+  var configureMenuEntries = [{name: "Configure the github repo", functionName: "githubRepoConfigure"},
+                              {name: "Configure the Cloudinary API", functionName: "cloudinaryConfigure"},
+                              {name: "Configure Google Analytics and Optimize", functionName: "configureGoogleScripts"},
+                              {name: "Set your GitHub authentication", functionName: "setGithubAuthToken"},
+                             ]; 
+  ss.addMenu("Configure", configureMenuEntries);
+                              
+  var manageMenuEntries = [{name: "Update active row", functionName: "updateRow"},
+                           {name: "Update all core pages", functionName: "updateAllCorePages"}, 
+                           {name: "Update all project pages", functionName: "updateAllProjects"},   
+                           {name: "Update CSS", functionName: "updateMainCSS"},
+                           {name: "Update JS", functionName: "updateMainJS"},
+                           {name: "Update sitemap", functionName: "updateSiteMap"},
+                          ]; 
+  ss.addMenu("Manage", manageMenuEntries);
 }
 
 
@@ -59,21 +68,7 @@ function configureGoogleScripts() {
  }  
 
 
-                     
-// ******************************************************************************************************
-// Function to store the PagesID for those pages generated from a gDoc 
-// ******************************************************************************************************
-function configurePagesID() {
-  
-  var privacyPolicyFileID = Browser.inputBox("Enter the file ID of your Privacy Policy google doc", "Privacy Policy File ID", Browser.Buttons.OK);
-  PropertiesService.getScriptProperties().setProperty("privacyPolicyFileID", privacyPolicyFileID.trim()); 
-  
-  var termsOfUseFileID = Browser.inputBox("Enter the file ID of your Terms of Use google doc", "Terms of Use File ID", Browser.Buttons.OK);
-  PropertiesService.getScriptProperties().setProperty("termsOfUseFileID", termsOfUseFileID.trim()); 
-                     
-  var wfdfProgramsFileID = Browser.inputBox("Enter the file ID of your WFDF Development Programs FileID google doc", "WFDF Development Programs File ID", Browser.Buttons.OK);
-  PropertiesService.getScriptProperties().setProperty("wfdfProgramsFileID", wfdfProgramsFileID.trim()); 
- }  
+                 
 
 // ******************************************************************************************************
 // Function to store the github email and pass, and store the authentication token for future calls

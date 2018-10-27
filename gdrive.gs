@@ -42,7 +42,28 @@ function getHTMLfromGDocID(fileID){
   //remove the gdrive <style>
   var bodyHtml = /<body.*?>([\s\S]*)<\/body>/.exec(entirePageHTML)[1];
   
+  //remove the warning on the links being redirected
+  bodyHtml = updateLinksInHTML(bodyHtml).replace(/https:\/\/www.google.com\/url\?q=/g,'');
+  
   return(bodyHtml);  
+}
+
+
+function updateLinksInHTML(html) {
+       
+  //remove what google adds at the beginning of the href
+  html = html.replace(/https:\/\/www.google.com\/url\?q=/g,'');
+
+  //remove what it adds at the end, too
+
+  var regex = /href\s*=\s*(['"])(https?:\/\/.+?)\1/ig;   
+  var link;
+  while((link = regex.exec(html)) !== null) {
+    html = html.replace(link[2], link[2].substring(0, link[2].indexOf('&')));
+  }
+  
+  return html;
+  
 }
 
 

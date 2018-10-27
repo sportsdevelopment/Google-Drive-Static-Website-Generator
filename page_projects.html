@@ -13,10 +13,6 @@
              <div class="form-group">
                <label for="sel1">Filter by theme</label>
                <select class="form-control" id="sel1">
-                 <option>Equity and inclusion</option>
-                 <option>Social good</option>
-                 <option>Sport development</option>
-                 <option>Youth support</option>
                </select>
              </div>
            </div>
@@ -24,26 +20,19 @@
            <div class="col-sm-4">
              <div class="form-group">
                <label for="sel1">Filter by location</label>
-               <select class="form-control" id="sel1">
-                 <option>Cambodia</option>
-                 <option>Haiti</option>
-                 <option>India</option>
-                 <option>Jordan</option>
-                 <option>Venezuela</option>
-                 <option>Uganda</option>
-                 <option>United Kingdom</option>
+               <select class="form-control" id="sel2">
                </select>
              </div>
            </div>
            
            <div class="col-sm-4">
              <div class="form-group">
-               <label for="sel1">Filter by type of support</label>
-               <select class="form-control" id="sel1">
-                 <option>Money</option>
-                 <option>Equipment</option>
-                 <option>Skills</option>
-                 <option>Disc Missionary</option>
+               <label for="sel2">Filter by type of support needed</label>
+               <select class="form-control" id="sel3">
+                 <option>All</option>
+                 <option>Donate</option>
+                 <option>Give</option>
+                 <option>Get involved</option>
                </select>
              </div>
            </div>
@@ -65,31 +54,56 @@
 <script>
 
 $( document ).ready(function() {
-  var jsonPath = 'projects/projects.json';
+  var jsonPath = 'projects/projects.json?v=' + randomString();
   var html = '';
-
+  var filterThemeHTMLString = '[all]';
+  var filterThemeHTML = '<option>All</option>';
+  var filterCountryHTMLString = '[all]';
+  var filterCountryHTML = '<option>All</option>';
+    
   $.getJSON(jsonPath, function(data) {
-  
+    
     $.each(data, function(key, item){
       if (item.is_published == '1') {
+        
         html += '<tr>';
        
-        html += '<td class="item-title"><a href="/projects/' + item.id + '">' + item.title + '</a></td>';
+        html += '<td class="item-title"><a href="/projects/' + item.url + '">' + item.title + '</a></td>';
         html += '<td class="item-theme">' + item.theme + '</td>';
         html += '<td class="item-country">' + item.country + '</td>';
-        html += '<td class="item-donate">';   
-                        
-        if (item.money_url || item.equipment_text || item.service_text) {
-          if (item.money_url) { html += '<i title="Money" class="fa fa-donate"></i>'; }
-          if (item.equipment_text) { html += '<i title="Equipment" class="fa fa-gift"></i>'; }
-          if (item.service_text) { html += '<i title="Skills" class="fa fa-user-circle"></i>'; }
-        }   
+        html += '<td class="item-donate">';                 
+          if (item.money_url || item.equipment_text || item.service_text) {
+            if (item.money_url) { html += '<i title="Donate money" class="fa fa-donate"></i><label class="sr-only">Donate</label>'; }
+            if (item.equipment_text) { html += '<i title="Give equipment" class="fa fa-gift"></i><label class="sr-only">Give equipment</label>'; }
+            if (item.service_text) { html += '<i title="Get involved" class="fa fa-user-circle"></i><label class="sr-only">Get involved</label>'; }
+          }   
         html += '</td>';  
       
         html += '</tr>';
+        
+        var testThemeArray = item.theme.split(',');
+        for (var iT =0; iT< testThemeArray.length; iT++){
+          var testTheme = '[' + testThemeArray[iT].trim().toLowerCase() + ']';
+          if(filterThemeHTMLString.indexOf(testTheme) == -1){
+            filterThemeHTMLString += testTheme;
+            filterThemeHTML += '<option>' + testThemeArray[iT].trim() + '</option>';
+          }
+        }  
+        var testCountryArray = item.country.split(',');
+        for (var iC =0; iC< testCountryArray.length; iC++){
+          var testCountry = '[' + testCountryArray[iC].trim().toLowerCase() + ']';
+          if(filterCountryHTMLString.indexOf(testCountry) == -1){
+            filterCountryHTMLString += testCountry;
+            filterCountryHTML += '<option>' + testCountryArray[iC].trim() + '</option>';
+          }
+        }  
+        
       }  
     });
-  
+    
+
+    $('#sel1').html(filterThemeHTML);
+    $('#sel2').html(filterCountryHTML);
     $('#projects').html(html);
   });
   
@@ -98,8 +112,13 @@ $( document ).ready(function() {
 
 $('select').on('change', function() {
   var value = this.value.toLowerCase();
-  $("#projects tr").filter(function() {
-    $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-  });
-})
+  if(value == 'all'){
+    $("#projects tr").show();
+  } else {
+    $("#projects tr").filter(function() {
+      $(this).toggle( $(this).text().toLowerCase().indexOf(value) > -1 )
+    });
+  }  
+});
+
 </script>

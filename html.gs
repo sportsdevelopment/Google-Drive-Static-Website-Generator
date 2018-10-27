@@ -1,7 +1,7 @@
 // ******************************************************************************************************
 // Function to return the full HTML of a page by stitching together all page components
 // ******************************************************************************************************
-function createHTML(pageID, pageTitle, bodyClass) {
+function createHTML(pageID, pageTitle, bodyClass, canonicalURL, description) {
   
   var html = '<!DOCTYPE html>' +
              '<html>' +
@@ -10,6 +10,8 @@ function createHTML(pageID, pageTitle, bodyClass) {
                  '<base target="_top">' + 
                   getContent('template_head') +                   
                   '<title>' + pageTitle + '</title>' +
+                  '<meta name="description" content="' + description + '" />' +
+                  '<link rel="canonical" href="http://development.wfdf.org/' + canonicalURL + '" />' +
                   createLinksToJSandCSS() +  
                '</head>' +
                '<body id="page-top" class="' + bodyClass + '">' +
@@ -25,7 +27,7 @@ function createHTML(pageID, pageTitle, bodyClass) {
 // ******************************************************************************************************
 // Function to return the full HTML of a page by stitching together different page components
 // ******************************************************************************************************
-function createUtilityPageHTML(pageID, pageTitle, bodyClass) {
+function createHTMLfromGdoc(pageID, pageTitle, bodyClass, canonicalURL, description) {
   
   if (typeof bodyClass === 'undefined') { 
     bodyClass = ' ' + bodyClass; 
@@ -50,7 +52,9 @@ function createUtilityPageHTML(pageID, pageTitle, bodyClass) {
                  '<base target="_top">' + 
                   getContent('template_head') +                   
                   '<title>' + pageTitle + '</title>' +
-                  createLinksToJSandCSS() +  
+                  '<meta name="description" content="' + description + '" />' +
+                  '<link rel="canonical" href="http://development.wfdf.org/' + canonicalURL + '" />' +
+                    createLinksToJSandCSS() +  
                '</head>' +
                '<body id="page-top" class="utility-page' + bodyClass + '">' +
                  getContent('template_navigation') +  
@@ -62,174 +66,176 @@ function createUtilityPageHTML(pageID, pageTitle, bodyClass) {
 }
 
 
+
+
 // ******************************************************************************************************
 // Function to generate the HTML for a project page
 // ******************************************************************************************************
-function generateProjectHTML(id) {
+function generateProjectHTML(idString,on_homepage,is_published,meta_title,page_url,short_title,headline,theme,country,img_thumb,headerImage_url, quote,descriptionGdocID,carouselImages,embedCode,money_url,money_text,equipment_url,equipment_text,service_url,service_text,has_team,facebook_url,twitter_url,site_url) {
+  
+  Logger.log('Generating project HTML');
   
   var html = '';
-  var idString = id.toString();
-  var data = sheet2Json('Projects');
-  //filter the data to get the project with the required id
-  var projectDataArray = data.filter(function (entry) {
-    return entry.id == idString;
-  });
-  //the above returns an array - you want just the first item
-  var projectData = projectDataArray[0];
   
-  var bodyClass = 'project-page';
-
   html += '<!DOCTYPE html>' +
             '<html>' +
               '<head>' +
                 createGoogleScriptSnippets() +
                 '<base target="_top">' + 
                 getContent('template_head') +                   
-                '<title>' + projectData.title + ' - WDFD Development</title>' +
+                '<title>' + meta_title + ' - WDFD Development</title>' +
+                '<meta name="description" content="' + short_title + ' ' + headline + '" />' +
+                '<link rel="canonical" href="http://development.wfdf.org/' + page_url + '" />' +  
                 createLinksToJSandCSS() +  
               '</head>' +
-              '<body id="page-top" class="' + bodyClass + '">' +
+              '<body id="page-top" class="project-page">' +
                 getContent('template_navigation');  
                
-	
+  
   // Header
-  var headerImage_url = projectData.headerImage_url;
   if(!headerImage_url) { headerImage_url = '/images/header.jpg';}    
-    html += '<header class="masthead" style="background-image: url(' + headerImage_url + ')">' +
-			  '<div class="container">' +
-				'<div class="intro-text">' +
-					'<div class="intro-lead-in">' + projectData['headline'] + '</div>' +
-					'<div class="intro-heading text-uppercase">' + projectData['title'] + '</div>' +
-					'<a class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="#donate">Give</a>' +
-				'</div>' +
+  html += '<header class="masthead" style="background-image: url(' + headerImage_url + ')">' +
+ 	        '<div class="container">' +
+		      '<div class="intro-text">' +
+			    '<div class="intro-lead-in">' + headline + '</div>' +
+			    '<div class="intro-heading text-uppercase">' + meta_title + '</div>' +
+				'<a class="btn btn-primary btn-xl text-uppercase js-scroll-trigger" href="#donate">Give</a>' +
 			  '</div>' +
-			'</header>';
+			'</div>' +
+		  '</header>';
 
   // Project description - you have 3 rows
   html += '<section id="description">' +
-     	    '<div class="container">';
+            '<div class="container">';
     
-  if (projectData.quote) { 
+  if (quote) { 
     html += '<div class="row">' +
               '<div class="col-lg-12">' +
                 '<blockquote class="blockquote">' +
                   '<p>' +
-                    projectData.quote +
+                    quote +
                   '</p>' +    
                 '</blockquote>' +   
               '</div>' +
             '</div>';
   }
-    
-  if (projectData.description) { 
-    html += '<div class="row">' +
-              '<div class="col-lg-12">' +
-                getHTMLfromGDocID(projectData.description) +
-              '</div>' +
-            '</div>';
-  }
-    	
-  if (projectData.carouselJSON) { 
-    var carouselID = 'carousel-' + id;
-    html += '<div class="row">' +
-              '<div class="col-lg-12">' +
-                generateCarousel(carouselID, projectData.carouselJSON) +
-              '</div>' +
-            '</div>';
-  }
-	
-  html += '</section>';
-
-	
   
+  if (descriptionGdocID) { 
+    html += '<div class="row">' +
+              '<div class="col-lg-12">' +
+                getHTMLfromGDocID(descriptionGdocID) +
+              '</div>' +
+            '</div>';
+  }
+    
+  if (embedCode) { 
+    html += '<div class="row text-center">' +
+              embedCode +
+            '</div>';
+  }
+    
+  if (carouselImages) { 
+    var carouselID = 'carousel-' + idString;
+    html += '<div class="row">' +
+              '<div class="col-lg-12">' +
+                generateCarouselFromList(carouselID, carouselImages) +
+              '</div>' +
+            '</div>';
+  }
+    
+  html += '</section>';
+     
   // Donate section - up to 3 calls to action
   var colCount = 0;
-  if(projectData.money_url) { colCount = colCount+1 }
-  if(projectData.equipment_text) { colCount = colCount+1 }
-  if(projectData.service_text) { colCount = colCount+1 }
-	
+  if(money_url) { colCount = colCount+1 }
+  if(equipment_url) { colCount = colCount+1 }
+  if(service_url) { colCount = colCount+1 }
+    
   if (colCount> 0) {
     var colSize = 12/colCount;
-    
+      
     html += '<section id="donate">' +
               '<div class="container">' +
-				'<div class="row text-center">';
-				  if(projectData.money_url) {
-					html += '<div class="col-md-' + colSize + '">' +
-							  '<a class="cta cta-ask cta-button" data-toggle="modal" href="' + projectData.money_url +'">' +
-								'<span class="fa-stack fa-4x">' +
-								  '<i class="fa fa-circle fa-stack-2x text-primary"></i>' +
-								  '<i class="fa fa-question fa-stack-1x fa-inverse"></i>' +
-								'</span>' +
-							  '</a>' +
-							  '<h4 class="service-heading">' +
-							    '<a class="cta cta-ask cta-text" data-toggle="modal" href="' + projectData.money_url + '">Donate</a>' +
-							  '</h4>' +
-							  '<p class="text-muted">' + projectData.money_text + '</p>' +
-							'</div>';
-				  }
-						
-				  if(projectData.equipment_text) {
-					if (!projectData.equipment_url) { projectData.equipment_url = '#give-equipment'}
-					  html += '<div class="col-md-' + colSize + '">' +
-					 		    '<a class="cta cta-ask cta-button" data-toggle="modal" href="' + projectData.equipment_url + '">' +
-								  '<span class="fa-stack fa-4x">' +
-									'<i class="fa fa-circle fa-stack-2x text-primary"></i>' +
-									'<i class="fa fa-question fa-stack-1x fa-inverse"></i>' +
-								  '</span>' +
-								'</a>' +
-								'<h4 class="service-heading">' +
-								  '<a class="cta cta-ask cta-text" data-toggle="modal" href="' + projectData.equipment_url + '">Give</a>' +
-								'</h4>' +
-								'<p class="text-muted">' + projectData.equipment_text + '</p>' +
-							  '</div>';
-				  }
-						
-				  if(projectData.service_text) {
-					if (!projectData.service_url) { projectData.service_url = '#give-service'}
-					  html += '<div class="col-md-' + colSize + '">' +
-								'<a class="cta cta-ask cta-button" data-toggle="modal" href="' + projectData.service_url + '">' +
-					   			  '<span class="fa-stack fa-4x">' +
-									'<i class="fa fa-circle fa-stack-2x text-primary"></i>' +
-									'<i class="fa fa-question fa-stack-1x fa-inverse"></i>' +
-								  '</span>' +
-								'</a>' +
-								'<h4 class="service-heading">' +
-								  '<a class="cta cta-ask cta-text" data-toggle="modal" href="' + projectData.service_url + '">Give</a>' +
-								'</h4>' +
-								'<p class="text-muted">' + projectData.service_text + '</p>' +
-							  '</div>';
-				  }
-
-				  html += '</div>' +
-				        '</div>' +
-			          '</section>';
+                '<div class="row text-center">';
+    //donate
+    if(money_url) {
+      if (!money_text) { money_text = ''; }
+      html += '<div class="col-md-' + colSize + '">' +
+                '<a class="cta cta-ask cta-button" target="_blank" href="' + money_url +'">' +
+                  '<span class="fa-stack fa-4x">' +
+                    '<i class="fa fa-circle fa-stack-2x text-primary"></i>' +
+                    '<i class="fa fa-donate fa-stack-1x fa-inverse"></i>' +
+                  '</span>' +
+                '</a>' +
+                '<h4 class="service-heading">' +
+                  '<a class="cta cta-ask cta-text" target="_blank" href="' + money_url + '">Donate</a>' +
+                '</h4>' +
+                '<p class="text-muted">' + money_text + '</p>' +
+              '</div>';
+    }
+      
+    //give
+    if(equipment_url) {
+      if (!equipment_text) { equipment_text = ''; }
+      html += '<div class="col-md-' + colSize + '">' +
+                '<a class="cta cta-ask cta-button" target="_blank" href="' + equipment_url + '">' +
+                  '<span class="fa-stack fa-4x">' +
+                    '<i class="fa fa-circle fa-stack-2x text-primary"></i>' +
+                    '<i class="fa fa-gift fa-stack-1x fa-inverse"></i>' +
+                  '</span>' +
+                '</a>' +
+                '<h4 class="service-heading">' +
+                  '<a class="cta cta-ask cta-text" target="_blank" href="' + equipment_url + '">Give</a>' +
+                '</h4>' +
+                '<p class="text-muted">' + equipment_text + '</p>' +
+              '</div>';
+    }
+      
+    //get involved
+    if(service_url) {
+      if (!service_text) { service_text = ''}
+      html += '<div class="col-md-' + colSize + '">' +
+                '<a class="cta cta-ask cta-button" target="_blank" href="' + service_url + '">' +
+                  '<span class="fa-stack fa-4x">' +
+                    '<i class="fa fa-circle fa-stack-2x text-primary"></i>' +
+                    '<i class="fa fa-user-circle fa-stack-1x fa-inverse"></i>' +
+                  '</span>' +
+                '</a>' +
+                '<h4 class="service-heading">' +
+                  '<a class="cta cta-ask cta-text" target="_blank" href="' + service_url + '">Get involved</a>' +
+                '</h4>' +
+                '<p class="text-muted">' + service_text + '</p>' +
+              '</div>';
+    }
+      
+    html += '</div>' +
+          '</div>' +
+        '</section>';
+  } else {
+    html += '<style>.intro-text .btn {display: none;}</style>';
   }
-	
-  // Team - TODO
-  if(projectData.has_team) {
-    html += '<section class="bg-light" id="team">' +
-			'</section>';
-  }
-  
+      
   // Links - TODO
-  var colCount = 0;
-  if(projectData.facebook_url) { colCount = colCount+1 }
-  if(projectData.twitter_url) { colCount = colCount+1 }
-  if(projectData.site_url) { colCount = colCount+1 }
-  
-  if (colCount> 0) {
-    var colSize = 12/colCount;
-    
-  }  
+  //var colCount = 0;
+  //if(projectData.facebook_url) { colCount = colCount+1 }
+  //if(projectData.twitter_url) { colCount = colCount+1 }
+  //if(projectData.site_url) { colCount = colCount+1 }
+   
+  // if (colCount> 0) {
+  //   var colSize = 12/colCount; 
+  // }  
     
   html += getContent('template_footer') + 
         '</body>' +
       '</html>';  
-
+  
+  Logger.log("Project HTML completed.");  
   return html;
+  
 
 }	
+  
+
 // ******************************************************************************************************
 // Function to return links to the main css and JS files with their respective version numbers
 // ******************************************************************************************************
@@ -291,13 +297,13 @@ function createGoogleScriptSnippets(){
 
 
 // ******************************************************************************************************
-// Function to generate the HTML for a carousel from a path to a JSON file
+// Function to generate the HTML for a carousel from a comma-separated list of images
 // ******************************************************************************************************
-function generateCarousel(itemID, linksJSON){
+function generateCarouselFromList(itemID, linksText){
     
   var html = '<div id="' + itemID + '" class="carousel slide" data-ride="carousel">';
   
-  var data = linksJSON;
+  var data = linksText.split(',');
   
   //indicators
   html += '<ul class="carousel-indicators">' +
@@ -315,20 +321,11 @@ function generateCarousel(itemID, linksJSON){
   var isActive = ' active';
   
   for(var j=0; j<data.length; j++){  
-    var slideEl = data[j];
-    switch(slideEl.type) {
-      case 'image':
-        html += '<div class="carousel-item' + isActive + '">' +
-                  '<img src="' + slideEl.url + '">' +   
-                '</div>';
-        break;
-      case 'youtube':
-        html += '<div class="carousel-item' + isActive + '">' +
-                  '<iframe src="' + slideEl.url + '" allow="autoplay; encrypted-media" allowfullscreen></iframe>' +
-                '</div>';  
-      default:
-      //do nothing  
-    }
+    var imageURL = data[j].trim();
+    //TODO - change behavior based on type of input. For the time being, asssume we only have images
+    html += '<div class="carousel-item' + isActive + '">' +
+              '<img src="' + imageURL + '">' +   
+            '</div>';
     isActive = '';
   }  
     
@@ -349,3 +346,35 @@ function generateCarousel(itemID, linksJSON){
   return html;   
 
 }
+
+
+// ******************************************************************************************************
+// Function to generate the plaintext sitemap of the site
+// ******************************************************************************************************
+function createSiteMapContent(){
+  
+  var htmlList = '';
+  
+  var corePagesSheet = SpreadsheetApp.getActive().getSheetByName('CorePages');
+  var clastRow = corePagesSheet.getLastRow();
+  var cVals = corePagesSheet.getRange(2, 3, clastRow, 4).getValues();
+  for (var i=0; i<clastRow-1; i++){   
+    var is_published = cVals[i][0];
+    if(is_published==1) {
+      htmlList += 'https://development.wfdf.org/' + cVals[i][1] + ' \n';
+    }
+  }
+  
+  var projsSheet = SpreadsheetApp.getActive().getSheetByName('Projects');
+  var plastRow = projsSheet.getLastRow();
+  var pVals = projsSheet.getRange(2, 3, plastRow, 5).getValues();
+  for (var j=0; j<plastRow-1; j++){   
+    var is_published = pVals[j][0];
+    if(is_published==1) {
+      htmlList += 'https://development.wfdf.org/projects/' + pVals[j][2] + ' \n';
+    }
+  }
+  
+  return htmlList;
+}
+

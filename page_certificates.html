@@ -27,7 +27,7 @@
 <script>
 
 $( document ).ready(function() {
-  var jsonPath = 'certificates/certificates.json';
+  var jsonPath = 'certificates/certificates.json?v=' + randomString();
   var html = '<tr>' +
                '<th>Certificate holder</th>' +
                '<th>Award Level</th>' +
